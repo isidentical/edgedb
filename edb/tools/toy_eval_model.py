@@ -68,26 +68,9 @@ def bsid(n: int) -> uuid.UUID:
     return uuid.UUID(f'ffffffff-ffff-ffff-ffff-{n:012x}')
 
 
-# # Toy basis stuff
-
-SET_OF, OPTIONAL, SINGLETON = (
-    ft.TypeModifier.SET_OF, ft.TypeModifier.OPTIONAL,
-    ft.TypeModifier.SINGLETON)
-
-# We just list things with weird behavior
-BASIS = {
-    'count': [SET_OF],
-    'IN': [SINGLETON, SET_OF],
-    '??': [OPTIONAL, SET_OF],
-    'EXISTS': [SET_OF],
-    'IF': [SET_OF, SINGLETON, SET_OF],
-    'UNION': [SET_OF, SET_OF],
-    '?=': [OPTIONAL, OPTIONAL],
-    '?!=': [OPTIONAL, OPTIONAL],
-}
-
 # ############# Data model
 
+# Make this UUIDs?
 PersonT = "Person"
 NoteT = "Note"
 
@@ -119,6 +102,25 @@ DB1 = mk_db([
     {"id": bsid(0x20), "__type__": NoteT, "name": "boxing"},
     {"id": bsid(0x21), "__type__": NoteT, "name": "unboxing", "note": "lolol"},
 ])
+
+
+# # Toy basis stuff
+
+SET_OF, OPTIONAL, SINGLETON = (
+    ft.TypeModifier.SET_OF, ft.TypeModifier.OPTIONAL,
+    ft.TypeModifier.SINGLETON)
+
+# We just list things with weird behavior
+BASIS = {
+    'count': [SET_OF],
+    'IN': [SINGLETON, SET_OF],
+    '??': [OPTIONAL, SET_OF],
+    'EXISTS': [SET_OF],
+    'IF': [SET_OF, SINGLETON, SET_OF],
+    'UNION': [SET_OF, SET_OF],
+    '?=': [OPTIONAL, OPTIONAL],
+    '?!=': [OPTIONAL, OPTIONAL],
+}
 
 
 # #############
@@ -169,15 +171,41 @@ def opt_ne(x: List[Data], y: List[Data]) -> List[Data]:
     return lift(operator.ne)(x, y)
 
 
+def count(x: List[Data]) -> List[Data]:
+    return [len(x)]
+
+
+def contains(es: List[Data], s: List[Data]) -> List[Data]:
+    return [e in s for e in es]
+
+
+def coalesce(x: List[Data], y: List[Data]) -> List[Data]:
+    return x or y
+
+
+def exists(x: List[Data]) -> List[Data]:
+    return [bool(x)]
+
+
+def union(x: List[Data], y: List[Data]) -> List[Data]:
+    return x + y
+
+
 _BASIS_IMPLS: Any = {
     '+': lift(operator.add),
     '++': lift(operator.add),
     '=': lift(operator.eq),
     '!=': lift(operator.ne),
     'str': lift(str),
-    'int': lift(int),
+    'int32': lift(int),
+    'int64': lift(int),
     '?=': opt_eq,
     '?!=': opt_ne,
+    'count': count,
+    'IN': contains,
+    '??': coalesce,
+    'EXISTS': exists,
+    'UNION': union,
 }
 BASIS_IMPLS: Dict[str, LiftedFunc] = _BASIS_IMPLS
 
@@ -186,7 +214,7 @@ BASIS_IMPLS: Dict[str, LiftedFunc] = _BASIS_IMPLS
 class EvalContext:
     query_input_list: List[IPath]
     input_tuple: Tuple[Data, ...]
-    db: DB  # or not?
+    db: DB
 
 #
 
@@ -202,21 +230,41 @@ def _eval(
 
 @_eval.register(qlast.SelectQuery)
 def eval_Select(node: qlast.SelectQuery, ctx: EvalContext) -> List[Data]:
-    # TODO subqueries
+    # TODO like all the complicated stuff
     return subquery(node.result, ctx)
+
+
+def eval_func_or_op(op: str, args: List[qlast.Expr],
+                    ctx: EvalContext) -> List[Data]:
+    arg_specs = BASIS.get(op)
+
+    results = []
+    for i, arg in enumerate(args):
+        if arg_specs and arg_specs[i] == SET_OF:
+            # SET OF is a subquery so we skip it
+            results.append(subquery(arg, ctx))
+        else:
+            results.append(eval(arg, ctx))
+
+    f = BASIS_IMPLS[op]
+    return f(*results)
 
 
 @_eval.register(qlast.BinOp)
 def eval_BinOp(node: qlast.BinOp, ctx: EvalContext) -> List[Data]:
-    f = BASIS_IMPLS[node.op]
-    return f(eval(node.left, ctx), eval(node.right, ctx))
+    return eval_func_or_op(node.op, [node.left, node.right], ctx)
 
 
 @_eval.register(qlast.FunctionCall)
 def eval_Call(node: qlast.FunctionCall, ctx: EvalContext) -> List[Data]:
     assert isinstance(node.func, str)
-    f = BASIS_IMPLS[node.func]
-    return f(*(eval(arg, ctx) for arg in node.args))
+    return eval_func_or_op(node.func, node.args, ctx)
+
+
+@_eval.register(qlast.IfElse)
+def visit_IfElse(self, query: qlast.IfElse, ctx: EvalContext) -> List[Data]:
+    return self.visit_func_or_op(
+        'IF', [query.if_expr, query.condition, query.else_expr])
 
 
 @_eval.register(qlast.StringConstant)
@@ -229,6 +277,15 @@ def eval_StringConstant(
 def eval_IntegerConstant(
         node: qlast.IntegerConstant, ctx: EvalContext) -> List[Data]:
     return [int(node.value)]
+
+
+@_eval.register(qlast.Set)
+def eval_Set(
+        node: qlast.Set, ctx: EvalContext) -> List[Data]:
+    out = []
+    for elem in node.elements:
+        out.extend(eval(elem, ctx))
+    return out
 
 
 @_eval.register(qlast.Tuple)
@@ -258,7 +315,7 @@ def eval_Path(node: qlast.Path, ctx: EvalContext) -> List[Data]:
 def eval(node: qlast.Base, ctx: EvalContext) -> List[Data]:
     return _eval(node, ctx)
 
-###
+# Query setup
 
 
 def eval_ptr(base: Data, ptr: IPtr, ctx: EvalContext) -> List[Data]:
@@ -429,7 +486,7 @@ def parse(querystr: str) -> qlast.Statement:
 def subquery(q: qlast.Expr, ctx: EvalContext) -> List[Data]:
     paths_opt = [(simplify_path(p), optional)
                  for p, optional in find_paths(q)]
-    always_optional = defaultdict(bool)
+    always_optional = defaultdict(lambda: True)
     for path, optional in paths_opt:
         if not optional:
             for i in range(1, len(path) + 1):
@@ -452,8 +509,12 @@ def subquery(q: qlast.Expr, ctx: EvalContext) -> List[Data]:
     return out
 
 
-def go(q: qlast.Expr) -> None:
-    ctx = EvalContext(query_input_list=[], input_tuple=(), db=DB1)
+def go(q: qlast.Expr, db: DB=DB1) -> None:
+    ctx = EvalContext(
+        query_input_list=[],
+        input_tuple=(),
+        db=db,
+    )
     out = subquery(q, ctx)
     debug.dump(out)
 
@@ -483,6 +544,7 @@ SELECT (Note.note ?= "lolol", Note)
 QUERY3 = '''
 SELECT (Person.name, (SELECT Note.name), (SELECT Note.name));
 '''
+
 
 def main() -> None:
     if sys.argv[1:] == ['-i']:

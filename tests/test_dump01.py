@@ -1750,6 +1750,7 @@ class TestDump01_CLI(tb.QueryTestCase, tb.CLITestCaseMixin):
                 await self.con.execute(
                     r'''
                     UPDATE ROPropsA
+                    FILTER true
                     SET {
                         rop0 := 99,
                     };
@@ -1763,6 +1764,7 @@ class TestDump01_CLI(tb.QueryTestCase, tb.CLITestCaseMixin):
                 await self.con.execute(
                     r'''
                     UPDATE ROPropsA
+                    FILTER true
                     SET {
                         rop1 := 99,
                     };
@@ -1815,6 +1817,7 @@ class TestDump01_CLI(tb.QueryTestCase, tb.CLITestCaseMixin):
                 await self.con.execute(
                     r'''
                     UPDATE ROLinksA
+                    FILTER true
                     SET {
                         rol0 := <C>{},
                     };
@@ -1828,6 +1831,7 @@ class TestDump01_CLI(tb.QueryTestCase, tb.CLITestCaseMixin):
                 await self.con.execute(
                     r'''
                     UPDATE ROLinksA
+                    FILTER true
                     SET {
                         rol1 := <C>{},
                     };
@@ -1841,6 +1845,7 @@ class TestDump01_CLI(tb.QueryTestCase, tb.CLITestCaseMixin):
                 await self.con.execute(
                     r'''
                     UPDATE ROLinksA
+                    FILTER true
                     SET {
                         rol2 := <C>{},
                     };
@@ -1892,6 +1897,7 @@ class TestDump01_CLI(tb.QueryTestCase, tb.CLITestCaseMixin):
                 await self.con.execute(
                     r'''
                     UPDATE ROLinksB
+                    FILTER true
                     SET {
                         rol0: {@rolp00 := 1},
                     };
@@ -1905,6 +1911,7 @@ class TestDump01_CLI(tb.QueryTestCase, tb.CLITestCaseMixin):
                 await self.con.execute(
                     r'''
                     UPDATE ROLinksB
+                    FILTER true
                     SET {
                         rol0: {@rolp01 := 1},
                     };
@@ -1918,6 +1925,7 @@ class TestDump01_CLI(tb.QueryTestCase, tb.CLITestCaseMixin):
                 await self.con.execute(
                     r'''
                     UPDATE ROLinksB
+                    FILTER true
                     SET {
                         rol1: {@rolp10 := 1},
                     };
@@ -1931,6 +1939,7 @@ class TestDump01_CLI(tb.QueryTestCase, tb.CLITestCaseMixin):
                 await self.con.execute(
                     r'''
                     UPDATE ROLinksB
+                    FILTER true
                     SET {
                         rol1: {@rolp11 := 1},
                     };

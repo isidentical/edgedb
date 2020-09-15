@@ -836,11 +836,11 @@ class TestEdgeQLIRScopeTree(tb.BaseEdgeQLCompilerTest):
 
     @tb.must_fail(errors.QueryError,
                   "reference to 'User.name' changes the interpretation",
-                  line=3, col=40)
+                  line=3, col=52)
     def test_edgeql_ir_scope_tree_bad_04(self):
         """
         WITH MODULE test
-        UPDATE User.deck SET { name := User.name }
+        UPDATE User.deck FILTER true SET { name := User.name }
         """
 
     @tb.must_fail(errors.QueryError,

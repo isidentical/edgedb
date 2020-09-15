@@ -1477,7 +1477,7 @@ class TestServerProto(tb.QueryTestCase):
             [1])
 
         await self.con.execute('''
-            DELETE (SELECT test::Tmp);
+            DELETE (SELECT test::Tmp) FILTER true;
         ''')
 
         self.assertTrue(await self.is_testmode_on())
@@ -2053,7 +2053,7 @@ class TestServerProtoDDL(tb.NonIsolatedDDLTestCase):
                     edgedb.Set(['aaa']))
 
             await con2.execute(f'''
-                DELETE (SELECT test::{typename});
+                DELETE (SELECT test::{typename}) FILTER true;
 
                 ALTER TYPE test::{typename} {{
                     DROP PROPERTY prop1;
@@ -2102,7 +2102,7 @@ class TestServerProtoDDL(tb.NonIsolatedDDLTestCase):
                     edgedb.Set(['aaa']))
 
             await con2.query(f'''
-                DELETE (SELECT test::{typename});
+                DELETE (SELECT test::{typename}) FILTER true;
             ''')
 
             await con2.query(f'''
@@ -2155,7 +2155,7 @@ class TestServerProtoDDL(tb.NonIsolatedDDLTestCase):
                     edgedb.Set([['a', 'aa']]))
 
             await con2.execute(f'''
-                DELETE (SELECT test::{typename});
+                DELETE (SELECT test::{typename}) FILTER true;
 
                 ALTER TYPE test::{typename} {{
                     DROP PROPERTY prop1;
@@ -2202,7 +2202,7 @@ class TestServerProtoDDL(tb.NonIsolatedDDLTestCase):
                     edgedb.Set(['aaa']))
 
             await con2.execute(f'''
-                DELETE (SELECT test::{typename});
+                DELETE (SELECT test::{typename}) FILTER true;
 
                 ALTER TYPE test::{typename} {{
                     DROP PROPERTY prop1;
@@ -2257,7 +2257,7 @@ class TestServerProtoDDL(tb.NonIsolatedDDLTestCase):
                     edgedb.Set(['aaa']))
 
             await con2.execute(f'''
-                DELETE (SELECT test::{typename});
+                DELETE (SELECT test::{typename}) FILTER true;
 
                 ALTER TYPE test::{typename} {{
                     DROP PROPERTY prop1;
@@ -2316,7 +2316,7 @@ class TestServerProtoDDL(tb.NonIsolatedDDLTestCase):
                     foo)
 
             await con2.execute(f'''
-                DELETE (SELECT test::{typename});
+                DELETE (SELECT test::{typename}) FILTER true;
 
                 ALTER TYPE test::{typename} {{
                     DROP LINK link1;
@@ -2379,7 +2379,7 @@ class TestServerProtoDDL(tb.NonIsolatedDDLTestCase):
                     edgedb.Set(['aaa']))
 
             await con2.execute(f'''
-                DELETE (SELECT test::{typename});
+                DELETE (SELECT test::{typename}) FILTER true;
 
                 ALTER ABSTRACT LINK test::link1 {{
                     DROP PROPERTY prop1;
@@ -2463,7 +2463,7 @@ class TestServerProtoDDL(tb.NonIsolatedDDLTestCase):
                     edgedb.Set(['aaa']))
 
             await self.con.execute(f'''
-                DELETE (SELECT test::{typename});
+                DELETE (SELECT test::{typename}) FILTER true;
 
                 ALTER TYPE test::{typename} {{
                     DROP PROPERTY prop1;

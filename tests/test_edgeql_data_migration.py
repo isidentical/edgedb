@@ -192,6 +192,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
         await self.con.execute("""
             UPDATE
                 Base
+            FILTER true
             SET {
                 name := 'base_01'
             };
@@ -520,6 +521,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
         # Fix the data.
         await self.con.execute(r"""
             UPDATE Base
+            FILTER true
             SET {
                 foo := 'base_08',
             };
@@ -577,6 +579,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
         # Fix the data.
         await self.con.execute(r"""
             UPDATE Base
+            FILTER true
             SET {
                 foo := 'base_09',
             };
@@ -940,6 +943,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
 
         await self.con.execute(r"""
             UPDATE Base
+            FILTER true
             SET {
                 bar := 21
             };
@@ -1022,6 +1026,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
 
         await self.con.execute(r"""
             UPDATE NewBase
+            FILTER true
             SET {
                 bar := 22
             };
@@ -1752,6 +1757,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
             INSERT Child2;
 
             UPDATE Base
+            FILTER true
             SET {
                 foo := (SELECT Child2 LIMIT 1)
             };
@@ -1834,6 +1840,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
 
         await self.con.execute(r"""
             UPDATE Base
+            FILTER true
             SET {
                 foo := 'base_foo_34'
             };
@@ -1917,6 +1924,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
                 name := 'child_35'
             };
             UPDATE Base
+            FILTER true
             SET {
                 foo := (
                     SELECT Child FILTER .name = 'child_35'
@@ -3155,6 +3163,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
         await self.con.execute(r"""
             UPDATE
                 Base
+            FILTER true
             SET {
                 foo: {
                     @bar := 'lp01'
@@ -3187,6 +3196,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
         await self.con.execute(r"""
             INSERT Base {foo := (INSERT Child)};
             UPDATE Base
+            FILTER true
             SET {
                 foo: {@bar := 'lp02'},
             };
@@ -3228,6 +3238,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
         await self.con.execute(r"""
             INSERT Base {foo := (INSERT Child)};
             UPDATE Base
+            FILTER true
             SET {
                 foo: {@bar := 3},
             };
@@ -3274,6 +3285,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
         await self.con.execute(r"""
             INSERT Base {foo := (INSERT Child)};
             UPDATE Base
+            FILTER true
             SET {
                 foo: {@bar := 'lp04'},
             };
@@ -3315,6 +3327,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
         await self.con.execute(r"""
             INSERT Base {foo := (INSERT Child)};
             UPDATE Base
+            FILTER true
             SET {
                 foo: {@bar := 'lp05'},
             };
@@ -3356,6 +3369,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
         await self.con.execute(r"""
             INSERT Base {child := (INSERT Child)};
             UPDATE Base
+            FILTER true
             SET {
                 child: {
                     @foo := 'lp06',
@@ -3377,6 +3391,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
         # update the existing data with a new link prop 'bar'
         await self.con.execute(r"""
             UPDATE Base
+            FILTER true
             SET {
                 child: {
                     @bar := 111,
@@ -3421,6 +3436,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
         await self.con.execute(r"""
             INSERT Derived {child := (INSERT Child)};
             UPDATE Derived
+            FILTER true
             SET {
                 child: {
                     @foo := 'lp07',
@@ -3476,6 +3492,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
         """)
         await self.con.execute(r"""
             UPDATE Derived
+            FILTER true
             SET {
                 child: {
                     @foo := 'lp08',
@@ -3544,6 +3561,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
         await self.con.execute(r"""
             INSERT Derived {child := (INSERT Child)};
             UPDATE Derived
+            FILTER true
             SET {
                 child: {
                     @foo := 'lp09',
@@ -3609,6 +3627,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
         await self.con.execute(r"""
             INSERT Derived {child := (INSERT Child)};
             UPDATE Derived
+            FILTER true
             SET {
                 child: {
                     @foo := 'lp10',
@@ -3669,6 +3688,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
         await self.con.execute(r"""
             INSERT Owner {item := (INSERT Thing)};
             UPDATE Owner
+            FILTER true
             SET {
                 item: {
                     @foo := 'owner_lp11',
@@ -3677,6 +3697,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
 
             INSERT Renter {item := (INSERT Thing)};
             UPDATE Renter
+            FILTER true
             SET {
                 item: {
                     @foo := 'renter_lp11',
@@ -3751,6 +3772,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
         await self.con.execute(r"""
             INSERT Owner {item := (INSERT Thing)};
             UPDATE Owner
+            FILTER true
             SET {
                 item: {
                     @foo := 'owner_lp11',
@@ -3759,6 +3781,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
 
             INSERT Renter {item := (INSERT Thing)};
             UPDATE Renter
+            FILTER true
             SET {
                 item: {
                     @bar := 'renter_lp11',
@@ -4570,6 +4593,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
 
         await self.con.execute(r"""
             UPDATE Base
+            FILTER true
             SET {
                 foo := [1.2, 4.5]
             };
@@ -4607,6 +4631,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
 
         await self.con.execute(r"""
             UPDATE Base
+            FILTER true
             SET {
                 foo := ('hello', 42)
             };
@@ -4645,6 +4670,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
 
         await self.con.execute(r"""
             UPDATE Base
+            FILTER true
             SET {
                 foo := ('test', 42, [1.2, 4.5])
             };
@@ -4674,6 +4700,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
 
         await self.con.execute(r"""
             UPDATE Base
+            FILTER true
             SET {
                 foo := (a := 'hello', b := 42)
             };
@@ -4755,6 +4782,7 @@ class TestEdgeQLDataMigration(tb.DDLTestCase):
 
         await self.con.execute(r"""
             UPDATE Base
+            FILTER true
             SET {
                 foo := ('new', 7, 1)
             };

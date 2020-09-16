@@ -358,6 +358,9 @@ def eval_Select(node: qlast.SelectQuery, ctx: EvalContext) -> List[Data]:
     subqs = [node.where] + [x.path for x in node.orderby]
     new_qil, out = subquery_full(node.result, extra_subqs=subqs, ctx=ctx)
     new_qil += [(IPartial(),)]
+    if node.result_alias:
+        out = [row + (row[-1],) for row in out]
+        new_qil += [(IORef(node.result_alias),)]
 
     out = eval_filter(node.where, new_qil, out, ctx=ctx)
     out = eval_orderby(node.orderby, new_qil, out, ctx=ctx)

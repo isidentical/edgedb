@@ -364,12 +364,12 @@ jobs:
 
     - name: Describe
       id: describe
-      uses: edgedb/edgedb-pkg/integration/actions/describe-artifact@master
+      uses: edgedb/edgedb-pkg/integration/actions/describe-artifact@s3
       with:
         target: debian-stretch
 
     - name: Publish
-      uses: edgedb/edgedb-pkg/integration/linux/upload/debian-stretch@master
+      uses: edgedb/edgedb-pkg/integration/linux/upload/debian-stretch@s3
       env:
         PKG_SUBDIST: "nightly"
         PKG_PLATFORM: "debian"
@@ -399,12 +399,12 @@ jobs:
 
     - name: Describe
       id: describe
-      uses: edgedb/edgedb-pkg/integration/actions/describe-artifact@master
+      uses: edgedb/edgedb-pkg/integration/actions/describe-artifact@s3
       with:
         target: debian-buster
 
     - name: Publish
-      uses: edgedb/edgedb-pkg/integration/linux/upload/debian-buster@master
+      uses: edgedb/edgedb-pkg/integration/linux/upload/debian-buster@s3
       env:
         PKG_SUBDIST: "nightly"
         PKG_PLATFORM: "debian"
@@ -449,12 +449,12 @@ jobs:
 
     - name: Describe
       id: describe
-      uses: edgedb/edgedb-pkg/integration/actions/describe-artifact@master
+      uses: edgedb/edgedb-pkg/integration/actions/describe-artifact@s3
       with:
         target: ubuntu-xenial
 
     - name: Publish
-      uses: edgedb/edgedb-pkg/integration/linux/upload/ubuntu-xenial@master
+      uses: edgedb/edgedb-pkg/integration/linux/upload/ubuntu-xenial@s3
       env:
         PKG_SUBDIST: "nightly"
         PKG_PLATFORM: "ubuntu"
@@ -484,12 +484,12 @@ jobs:
 
     - name: Describe
       id: describe
-      uses: edgedb/edgedb-pkg/integration/actions/describe-artifact@master
+      uses: edgedb/edgedb-pkg/integration/actions/describe-artifact@s3
       with:
         target: ubuntu-bionic
 
     - name: Publish
-      uses: edgedb/edgedb-pkg/integration/linux/upload/ubuntu-bionic@master
+      uses: edgedb/edgedb-pkg/integration/linux/upload/ubuntu-bionic@s3
       env:
         PKG_SUBDIST: "nightly"
         PKG_PLATFORM: "ubuntu"
@@ -519,12 +519,12 @@ jobs:
 
     - name: Describe
       id: describe
-      uses: edgedb/edgedb-pkg/integration/actions/describe-artifact@master
+      uses: edgedb/edgedb-pkg/integration/actions/describe-artifact@s3
       with:
         target: ubuntu-focal
 
     - name: Publish
-      uses: edgedb/edgedb-pkg/integration/linux/upload/ubuntu-focal@master
+      uses: edgedb/edgedb-pkg/integration/linux/upload/ubuntu-focal@s3
       env:
         PKG_SUBDIST: "nightly"
         PKG_PLATFORM: "ubuntu"
@@ -554,12 +554,12 @@ jobs:
 
     - name: Describe
       id: describe
-      uses: edgedb/edgedb-pkg/integration/actions/describe-artifact@master
+      uses: edgedb/edgedb-pkg/integration/actions/describe-artifact@s3
       with:
         target: centos-7
 
     - name: Publish
-      uses: edgedb/edgedb-pkg/integration/linux/upload/centos-7@master
+      uses: edgedb/edgedb-pkg/integration/linux/upload/centos-7@s3
       env:
         PKG_SUBDIST: "nightly"
         PKG_PLATFORM: "centos"
@@ -589,12 +589,12 @@ jobs:
 
     - name: Describe
       id: describe
-      uses: edgedb/edgedb-pkg/integration/actions/describe-artifact@master
+      uses: edgedb/edgedb-pkg/integration/actions/describe-artifact@s3
       with:
         target: centos-8
 
     - name: Publish
-      uses: edgedb/edgedb-pkg/integration/linux/upload/centos-8@master
+      uses: edgedb/edgedb-pkg/integration/linux/upload/centos-8@s3
       env:
         PKG_SUBDIST: "nightly"
         PKG_PLATFORM: "centos"

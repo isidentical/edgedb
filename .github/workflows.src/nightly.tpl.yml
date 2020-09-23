@@ -148,12 +148,12 @@ jobs:
 
     - name: Describe
       id: describe
-      uses: edgedb/edgedb-pkg/integration/actions/describe-artifact@master
+      uses: edgedb/edgedb-pkg/integration/actions/describe-artifact@s3
       with:
         target: << tgt.name >>
 
     - name: Publish
-      uses: edgedb/edgedb-pkg/integration/linux/upload/<< tgt.platform >><< "-{}".format(tgt.platform_version) if tgt.platform_version >>@master
+      uses: edgedb/edgedb-pkg/integration/linux/upload/<< tgt.platform >><< "-{}".format(tgt.platform_version) if tgt.platform_version >>@s3
       env:
         PKG_SUBDIST: "nightly"
         PKG_PLATFORM: "<< tgt.platform >>"
